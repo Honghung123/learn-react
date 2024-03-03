@@ -4,6 +4,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Import and export in JS
+// With default export: we can specify the name for import file
+// With named export: we must import exactly the name of file has exported
+// We can import all of a file by using asterisk notation. Ex: import * as bundle from "./file"
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
