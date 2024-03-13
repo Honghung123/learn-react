@@ -1,4 +1,5 @@
 # Start learning React from scratch
+- Bonus [Some best practices in React - Github](https://www.notion.so/honghung123/Props-key-5917325fc2ab41b9b467b64585678064?pvs=4)
 ## Knowledge 
 - We call JSX everything inside wrapped inside the parentheses returned by the component:
 - This looks like HTML, but it's not really HTML. It's a little different.
@@ -10,7 +11,19 @@
 - Inside the curly brackets { } we can add any JavaScript statement, but just one statement for every
     curly bracket block. The statement must return something. Ex: we can use a ternary operator
 
-- In React, useState, as well as any other function starting with “use”, is called a Hook.
+- - Đối với React element(đoạn code được return) thì props dùng như attribute của html, đặc biệt class → className và for → htmlFor(quy ước có sẵn, nếu không sẽ bị warning)
+- Đối với React component thì dùng props như đối số, có thể truyền bất cứ dữ liệu gì, tự do đặt tên props nhưng tốt nhất đặt theo kiểu camelCase
+    - Trong dự án thực tế thì props là một object **có rất nhiều property** nên thay vì chúng ta truyền từng property là đối số thì chúng ta **truyền thẳng object** là đối số. Và dùng distructuring để lấy object trong tham số của React function.
+    - Props đóng vai trò làm đối số có thể là **String literal** hoặc **Expression**(toán tử cộng, trừ , … , ba ngôi). Prop **không truyền giá trị** mặc định value là **true**.
+- **Note:** prop “key” là prop chỉ được dùng trong array để render các element phân biệt từng cái, nếu dùng cho các component khác sẽ bị warning.
+
+- In React, useState, as well as any other function starting with “use”, is called a Hook. Hook only use for **Function components**.
+- When to use:
+    + New project: Hooks
+    + Old project:
+        + New component: Function component + Hooks 
+        + Old component: Consider and Optimize when possible.
+    + Business logic needs use OOP: Class component
 - The useState Hook provides those two things:
     + A state variable to retain the data between renders.
     + A state setter function to update the variable and trigger React to render the component again.
@@ -25,7 +38,7 @@
         * The state setter function (setIndex) which can update the state variable and trigger React to render the component again.
     + Here’s how that happens in action:  ```const [index, setIndex] = useState(0);```
         * Your component renders the first time. Because you passed 0 to useState as the initial value for index, it will return [0, setIndex]. React remembers 0 is the latest state value.
-        * You update the state. When a user clicks the button, it calls setIndex(index + 1). index is 0, so it’s setIndex(1). This tells React to remember index is 1 now and triggers another render.
+        * You update the state. When a user clicks the button, it calls `setIndex(index + 1)`. index is 0, so it’s setIndex(1). This tells React to remember index is 1 now and triggers another render.
         * Your component’s second render. React still sees useState(0), but because React remembers that you set index to 1, it returns [1, setIndex] instead.
     + And so on!
     Note: setState(5) actually works like setState(n => 5), but n is unused!
@@ -48,6 +61,8 @@
     We must call its modifier function setCount() 
     Otherwise the React component will not update its UI to reflect the changes of the data. 
     Calling the modifier is the way we can tell React that the component state has changed.
+- When you want to update an object and array, you need to create a new one (or make a copy of an existing one), and then update the state to use that copy. Usually, you will use the ... spread syntax to copy objects and arrays that you want to change
+
 - Props can be passed as attributes to the component in the JSX:
     ```<WelcomeMessage myprop={'somevalue'} />```
     and inside the component we receive the props as argument:
@@ -66,11 +81,12 @@
     access to the lifecycle events of a component. When you call the hook, you pass it a function. The
     function will be run by React when the component is first rendered, and on every subsequent rerender/update.
     React first updates the DOM, then calls any function passed to useEffect() .
-    useEffect() function is run on every subsequent re-render/update of the component, we can tell React to skip it, for performance purposes, by adding a second parameter which is an array that contains a list of state variables to watch for. React will only re-run the side effect if one of the items in this array changes.
-    Similarly, you can tell React to only execute the side effect once (at mount time), by passing an empty array
+    + useEffect() function is run on every subsequent re-render/update of the component if only have callback.
+    + Similarly, you can tell React to only execute the side effect once (at mount time), by passing an empty array
     useEffect() is great for adding logs, accessing 3rd party APIs and much more.
-- When you want to update an object and array, you need to create a new one (or make a copy of an existing one), and then update the state to use that copy. Usually, you will use the ... spread syntax to copy objects and arrays that you want to change
-
+    + We can tell React to skip it, for performance purposes, by adding a second parameter which is an array that contains a list of state variables to watch for. React will only re-run the side effect if one of the items in this array changes.
+    + Callback của **useEffect** sẽ chạy sau khi các trình tự sau thực hiện xong: Cập nhật lại state, cập nhật lên DOM, re-render UI, gọi cleanup function để dọn dẹp state cũ nếu có, và cuối cùng gọi callback
+    + Callback của **useLayoutEffect** sẽ chạy theo thứ tự sau: cập nhật lại state, cập nhật lên DOM, gọi cleanup function, gọi callback của useLayoutEffect và cuối cùng mới re-render UI.
 
 - When you want a component to “remember” some information, but you don’t want that information to trigger new renders, you can use a ref: ```import { useRef } from 'react';```
 - Then, you pass the initial value that you want to reference: ``` const ref = useRef(initial_value); ```
@@ -91,6 +107,23 @@
     => If your component needs to store some value, but it doesn’t impact the rendering logic, choose refs.
 - To get a ref to a node, you must  pass your ref as the ref attribute to the JSX tag for which you want to get the DOM node:  `const myRef = useRef(null); <div ref={myRef}>` 
     +  Initially, **myRef.current** will be null. When React creates a DOM node for this <div>, React will put a reference to this node into **myRef.current**
+
+- `memo` is a HOC(High Order Component) used to avoid re-render a child component if it not depend on its parent(like props, state,...) when is parent re-render. It will watch and decide to whether that child component should be re-rendered or not base on state or props it receives. 
+- `useCallback` when you don't want the child component to be re-rendered when it uses `memo` and callback from parent component 
+- `useMemo` when you don't want the function should be rerender when tbe component contains it is re-rendered
+
+- `useReducer` : Components with many state updates spread across many event handlers can get overwhelming. For these cases, you can consolidate all the state update logic outside your component in a single function, called a reducer.
+    + Step 1: Move from setting state to dispatching actions: event handlers like adding, updating, deleting,...
+    + Step 2: Write a reducer function: **function yourReducer(state, action) { // return next state for React to set by using condition statement }**
+    + Step 3: Use the reducer from your component: 
+        `import { useReducer } from 'react';`
+        `const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);`
+    
+- `forwardRef` is used to expose a custom ref handle to the parent component. Example:
+    + `function MyInput(props, ref) { return <input {...props} ref={ref} />; }); export default forwardRef(MyInput)`
+    + `<MyInput ref={customRef} />`
+- Using CSS in React JS
+    + Use inline css: `<span className={{ padding: "0 1rem"}}>`
 
 ## Install tailwind css
 - In the terminal, run this command to install these dependencies:

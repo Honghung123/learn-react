@@ -1,11 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useEffectEvent, useLayoutEffect, memo, useCallback, useMemo, useContext } from "react";
 
 import logo from "./logo.svg";
 import "./App.css";
 
+// Routers
+import {Routes, Route, Link} from 'react-router-dom'
+
 import Button from "./components/Button";
 import Expenses from "./components/Expenses";
 import { useImmer } from "use-immer"; // Update array or object to not be tedious 
+import ChildComponent from "./components/ContentMemo";
+import MyTask from "./components/Todo";
+import ChangeThemeUsingContext from "./components/ThemeContext/context";
+import { TaskContext, TaskProvider, useTask, actions } from "./components/ReducerWithContext"; 
+import Media from "./components/Video/media";
+import Heading from "./components/Module/Heading";
+import Paragraph from "./components/Module/Paragraph";
+import GlobalStyles from "./components/GlobalStyles";
+import HomePage from "./pages/Home";
+import ShopPage from "./pages/Shop";
+import BlogPage from "./pages/Blog";
+
 
 function handleClickEvent(event) {
   alert("You have clicked this button");
@@ -68,144 +83,55 @@ function SimpleForm(props) {
         onChange={(event) => props.setUsername(event.target.value)}
         placeholder="Enter username"
       ></input>
-      <label class="block">
-        <span class="block text-sm font-medium text-white-700">Email</span>
+      <label className="block">
+        <span className="block text-sm font-medium text-white-700">Email</span>
         <input
           type="text"
           value="hung@gmail.com"
           disabled
-          class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
+          className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
           focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
           disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
           invalid:border-pink-500 invalid:text-pink-600
           focus:invalid:border-pink-500 focus:invalid:ring-pink-500
         "
+          onChange={() => {}}
         />
       </label>
-      <label class="block">
-        <span class="block text-sm font-medium text-white-700">
+      <label className="block">
+        <span className="block text-sm font-medium text-white-700">
           Phone number
         </span>
         <input
           type="text"
           value="0123456789"
-          invalid
-          class="text-slate-700 mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
+          invalid="true"
+          className="text-slate-700 mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
           focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 
           invalid:border-pink-500 invalid:text-pink-600
           focus:invalid:border-pink-500 focus:invalid:ring-pink-500
         "
+          onChange={() => {}}
         />
       </label>
-      <label class="block">
-        <span class="block text-sm font-medium text-white-700">Address</span>
+      <label className="block">
+        <span className="block text-sm font-medium text-white-700">
+          Address
+        </span>
         <input
           type="text"
           value="Ho Chi Minh City"
-          class="text-slate-700 mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
+          className="text-slate-700 mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
           focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 
           invalid:border-pink-500 invalid:text-pink-600
           focus:invalid:border-pink-500 focus:invalid:ring-pink-500
         "
+          onChange={() => {}}
         />
       </label>
     </form>
   );
-}
-let count  = 0;
-function DisplayModal({ title }) {
-  console.log("My value of title: " + title + " is " + count++);
-  const [showModal, setShowModal] = useState(false);
-  function showModalHandler() {
-    setShowModal(true);
-  }
-  function closeModalHandler() {
-    setShowModal(false);
-  }
-
-  return (
-    <div className="modal">
-      <button
-        data-modal-target="static-modal"
-        data-modal-toggle="static-modal"
-        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
-      >
-        Toggle modal
-      </button>
-
-      <div
-        id="static-modal"
-        data-modal-backdrop="static"
-        tabindex="-1"
-        aria-hidden="true"
-        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
-      >
-        <div class="relative p-4 w-full max-w-2xl max-h-full">
-          <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                Static modal
-              </h3>
-              <button
-                type="button"
-                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                data-modal-hide="static-modal"
-              >
-                <svg
-                  class="w-3 h-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 14"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                  />
-                </svg>
-                <span class="sr-only">Close modal</span>
-              </button>
-            </div>
-            <div class="p-4 md:p-5 space-y-4">
-              <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                With less than a month to go before the European Union enacts
-                new consumer privacy laws for its citizens, companies around the
-                world are updating their terms of service agreements to comply.
-              </p>
-              <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                The European Union’s General Data Protection Regulation
-                (G.D.P.R.) goes into effect on May 25 and is meant to ensure a
-                common set of data rights in the European Union. It requires
-                organizations to notify users as soon as possible of high-risk
-                data breaches that could personally affect them.
-              </p>
-            </div>
-            <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-              <button
-                data-modal-hide="static-modal"
-                type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                I accept
-              </button>
-              <button
-                data-modal-hide="static-modal"
-                type="button"
-                class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-              >
-                Decline
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+} 
 
 function MyExpense() {
   const expenseToday = [
@@ -220,12 +146,18 @@ function MyExpense() {
   )
 }
 
-function CurrentTime({ date }) {
-  const timeString = date.toLocaleTimeString("en-US", {
+function Timer() {
+  const [time, setTime] = useState(new Date());
+  const timeString = time.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
   });
+  useEffect(() => {
+    setInterval(() => {
+      setTime(prevState => new Date())
+    }, 1000);
+  })
   return <h3 className="bg-sky-200 font-bold">Current time: {timeString}</h3>;
 }
 
@@ -306,13 +238,482 @@ function ItemList({ artworks, onToggle }) {
   );
 }
 
+function FormCourseSelect() {
+  const courses = [
+    {id: 1, name: "React JS", price: 134000}, 
+    {id: 2, name: "Vue JS" , price: 134000}, 
+    {id: 3, name: "Angular", price : 134000}, 
+  ] 
+  const [checked, setChecked] = useState([]);
+  const handleSubmit = () => { 
+    console.log({id: checked});
+  }
+  const handleCheck = (id) => { 
+    setChecked(prev => {
+      if (prev.includes(id)) {
+        return checked.filter(courseId => courseId !== id)
+      } else {
+        return [...prev, id]
+      }
+    });
+  }
+  return (
+    <>
+      {courses.map((course) => (
+        <div key={course.id}>
+          <input
+            type="checkbox"
+            name="course"
+            onChange={() => handleCheck(course.id)}
+            checked={checked.includes(course.id)}
+          />
+          {course.name}
+        </div>
+      ))}
+      <button
+        onClick={handleSubmit}
+        className="bg-sky-500 px-6 py-4 ring ring-rose-300 "
+      >
+        Register
+      </button>
+    </>
+  );
+}
 
-function App() {
+function Todo({ todo, events, children }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentTodo, setCurrentTodo] = useState(todo); 
+  const todoContent = isEditing ? (
+    <>
+      <input
+        value={currentTodo.name}
+        className="text-black"
+        onChange={(e) => {
+          setCurrentTodo({ ...currentTodo, name: e.target.value });
+        }}
+      />
+      <span
+        onClick={() => {
+          events.handleSaveTodo(currentTodo);
+          setIsEditing(false);
+        }}
+      >
+        Save
+      </span>
+    </>
+  ) : (
+    <>
+      <input
+        type="checkbox"
+        onChange={() => events.handleCheckTodo(currentTodo.id)}
+        checked={currentTodo.isDone}
+      />
+      {todo.name}
+      <span
+        onClick={() => setIsEditing(!isEditing)}
+        className="px-6 inline-block"
+      >
+        Edit
+      </span>
+      <span onClick={() => events.handleRemoveTodo(currentTodo.id)}>
+        Remove
+      </span>
+    </>
+  );
+  return (
+    <li key={currentTodo.id}>
+      {todoContent} 
+    </li>
+  );
+}
+
+function TodoList() { 
+  const [todoName, setTodoName] = useState("")
+  const [todoList, setTodoList] = useState(() => {
+    const oldList = JSON.parse(localStorage.getItem("todoList")) ?? [];
+    return oldList;
+  })
+  const countRef = useRef(() => {
+    return todoList.length > 0 ? todoList[todoList.length - 1].id : 1;
+  });
+  localStorage.setItem("todoList", JSON.stringify(todoList));
+  const handleAddTodo = () => { 
+    countRef.current += 1;
+    const newTodo = {
+      id: countRef.current,
+      name: todoName,
+      idDone: false
+    }
+    const newTodoList = [...todoList, newTodo]
+    setTodoList(newTodoList);
+    setTodoName("");
+  }
+  const handleCheckTodo = (id) => {
+    const todo = todoList.find(todo => todo.id === id);
+    todo.isDone = !todo.isDone; 
+    setTodoList([...todoList ]);
+  }
+  const handleRemoveTodo = (id) => { 
+    setTodoList(todoList.filter(todo => todo.id !== id))
+  } 
+  const handleSaveTodo = (savedTodo) => {
+    const index = todoList.findIndex(todo => todo.id === savedTodo.id);
+    todoList[index] = {...savedTodo}
+    setTodoList([...todoList]);
+  }
+
+  const events = {  
+    handleSaveTodo,
+    handleCheckTodo, 
+    handleRemoveTodo,
+  }
+  return (
+    <>
+      <div className="todo-container space-y-6 border border-xm border-rose-300">
+        <div className="todo-input">
+          <input
+            className="text-black"
+            type="text"
+            value={todoName}
+            onChange={(e) => setTodoName(e.target.value)}
+          />
+          <button
+            onClick={handleAddTodo}
+            className="px-4 py-2 bg-lime-500 ring hover:bg-lime-300"
+          >
+            Add Todo
+          </button>
+        </div>
+        <ul className="todo-list">
+          {todoList.length > 0 ? (
+            todoList.map((todo) => (
+              <Todo key={todo.id} todo={todo} events={events}> 
+              </Todo>
+            ))
+          ) : (
+            <li>There is no todo here. Please add new!</li>
+          )}
+        </ul>
+      </div>
+    </>
+  );
+}
+
+function getNumberItemInAList(list, start, number) {
+  return list.slice(start, start + number);
+}
+
+const tags = [
+  { title: "Albums", url: "albums", params:"albumId" },
+  { title: "Posts", url: "posts", params:"postId" },
+  { title: "Photos", url: "photos", params:"photoId" },
+  { title: "Todos", url: "todos" , params:"todoId"},
+]
+const baseUrl = "https://jsonplaceholder.typicode.com";
+function Comment() { 
+  const [list, setList] = useState([]);
+  const [tag, setTag] = useState(tags[0]); 
+  const [itemId, setItemId] = useState(1);
+  useEffect(() => {
+    const url = `${baseUrl}/${tag.url}`
+    fetch(`${url}?${tag.params}=${itemId}`)
+      .then((response) => response.json())
+      .then(data => setList(data));
+  }, [itemId, tag])
+  // useEffect(() => {
+  //   fetch(url)
+  //     .then((response) => response.json())
+  //     .then(data => setList(data));
+  // }, [])
+  const handleTagClick = (t) => {
+    setTag({ ...t }); 
+  }
+  const commonClass = "px-2 py-4 mx-6 hover:bg-violet-300";
+  return (
+    <div className="border border-sm border-rose-300">
+      <div>
+        {tags.map((t) => (
+          <button
+            type="button"
+            className={
+              t.url === tag.url
+                ? "bg-violet-300 " + commonClass
+                : "bg-violet-500 " + commonClass
+            }
+            onClick={() => handleTagClick(t)}
+            key={t.url}
+          >
+            {t.title}
+          </button>
+        ))}
+        <h3 className="text-orange-300 font-bold">Select {tag.title}</h3>
+        <select
+          className="text-black"
+          onClick={(e) => setItemId(e.target.value)}
+        >
+          {list.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.title}
+            </option>
+          ))}
+        </select>
+      </div>
+      <h4 className="text-lime-500 font-bold">Comment about this post: </h4>
+      {/* <div className="comment-section py-6">
+        {comments.map((comment) =>
+          <div key={comment.id}>
+            <p className="text-yellow-500 font-bold">{comment.name} - {comment.email}</p>
+            <p className="italic font-slate-500">{comment.body}</p>
+          </div>)}
+      </div> */}
+    </div>
+  );
+}
+
+function GoOnTop() {
+  const [show, setShow] = useState(false);
+  useEffect(() => { 
+    const handleScroll = () => { 
+      setShow(window.scrollY > 300);  
+    }
+    window.addEventListener('scroll', handleScroll); 
+    // Clean up function - run each re-render. Avoid memory leak or updating state for unmounted component
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []) 
+  return (
+    <>
+      {show && (
+        <a
+          href="#"
+          className="fixed inline-block py-2 px-4 right-[1rem] bottom-2 rounded-lg bg-lime-700 text-white hover:bg-lime-400"
+        >
+          Go to top
+        </a>
+      )}
+    </>
+  );
+} 
+
+function PreviewUploadImage() {
+  const [image, setImage] = useState();
+  useEffect(() => { 
+
+    // Clean the last uploaded image
+    return () => {
+      image && URL.revokeObjectURL(image.preview)
+    }
+  }, [image])
+  const handleUploadFile = (e) => { 
+    const file = e.target.files[0];  
+    file.preview = URL.createObjectURL(file);
+    setImage(file);
+  } 
+  return (
+    <div className="border border-yellow-300 rounded-lg">
+      <input type="file" onChange={handleUploadFile} />
+      <h4>Preview image: </h4>
+      {image && <img src={image.preview} alt={image.name} width={200} height={100} />}
+    </div>
+  );
+}
+
+const myChannelList = [
+  {id: 1, name: 'React JS channel'},
+  {id: 2, name: 'Angular channel'},
+  {id: 3, name: 'Vue JS channel'},
+]
+function Channel() {
+  const [channelList, setChannelList] = useState(myChannelList);
+  const [channelId, setChannelId] = useState(1); 
+  const handleSwitchChannel = (id) => {
+    console.log("Switch channel to " + id);
+    setChannelId(id);
+  } 
+  return (
+    <>
+      {channelList.map((channel) => (
+        <button
+          key={channel.id}
+          onClick={() => handleSwitchChannel(channel.id)}
+          className={
+            "px-4 py-2 " + (channel.id === channelId
+              ? "bg-sky-300"
+              : "bg-sky-500 hover:bg-sky-300")
+          }
+        >
+          {channel.name}
+        </button>
+      ))}
+      <ChatApp channelId={channelId} />
+    </>
+  );
+} 
+
+function ChatApp({ channelId }) {
+  const [messages, setMessages] = useState([])
+  const [input, setInput] = useState("")
+  useEffect(() => { 
+    const handleComment = (event) => {
+      console.log(event.detail);
+    }
+    window.addEventListener(`channel-${channelId}`, handleComment);
+    return () => window.removeEventListener(`channel-${channelId}`, handleComment);
+  }, [channelId])
+  const handleSend = () => {
+    setMessages([...messages, input]);
+    setInput("");
+  }
+  return (
+    <>
+      <input className="text-black" value={input} onChange={(e) => setInput(e.target.value)} />
+      <button onClick={handleSend}>Send</button>
+      <ul>{messages.map((msg, index) => <li key={index} >{ msg }</li>) }</ul>
+    </>
+  )
+}
+
+
+function Counters() {
+  const [count, setCount] = useState(0);
+  useLayoutEffect(() => {
+    if (count > 3) {
+      setCount(0)
+    }
+  }, [count])
+  const handleRun = useCallback(() => {
+    setCount(prev => prev + 1);
+  }, []);
+  console.log("Parent Component Render or re-render");
+
+  return (
+    <>
+      <ChildComponent onClick={ handleRun } />
+      <h1>Current count: { count }</h1>
+      
+    </>
+  )
+}
+
+function Shopping() {
+  const [productList, setProductList] = useState([]);
+  const [productName, setProductName] = useState("");
+  const [price, setPrice] = useState("")
+  const proNameRef = useRef();
+  const handleAddToList = () => {
+    const newProduct = { name: productName, price: +price };
+    setProductList([...productList, newProduct]);
+    setPrice("")
+    setProductName("")
+    proNameRef.current.focus();
+  }
+  // useMemo avoid unnecessary re-render logic function when the component is rendered, it's only rerender when its dependencies are changed. If there is no dependency, it will run only once when the component is mounted
+  const totalPrice = useMemo(() => {
+    const total = productList.reduce((accumulator, product) => accumulator + product.price, 0);
+    console.log("This callback called");
+    return total;
+  }, [productList])
+  return (
+    <>
+      Product name: <input className="text-black" ref={ proNameRef } value={productName} onChange={(e) => setProductName(e.target.value)} />
+      Price: <input className="text-black" value={price} onChange={(e) => setPrice(e.target.value)} />
+      <button onClick={handleAddToList}>Add to list</button>
+      <h3>Total:  { totalPrice }</h3>
+      <ul>
+        {productList.map((product, index) => <li key={index}>{ product.name } - {product.price}</li>)}
+      </ul>
+    </>
+  )
+}
+
+function DemoUseContext() {
+  return (
+    <ChangeThemeUsingContext />
+  )
+}
+
+function GlobalStateWithReducerAndContext() {
+  const [state, dispatch] = useTask();
+  const { todo, todos } = state;
+  return (
+    <div className="border-2 border-slate-300 my-4">
+      <h3>A simple global state using useReducer and useContext</h3>
+      <input
+        className="text-black"
+        value={todo}
+        placeholder="Add new task"
+        onChange={(e) => dispatch(actions.setTask(e.target.value))}
+      />
+      <button onClick={() => dispatch(actions.addTask(todo))}>Add</button>
+      <h3>List of tasks: </h3>
+      {todos.map((t, index) => <li key={index}>Task {index} - {t}
+        <span className="inline-block mx-2 hover:cursor-pointer" onClick={() => dispatch(actions.removeTask(index)) }>&times;</span></li>)}
+    </div>
+  );
+}
+
+function HookUseImperactiveHandle() {
+  return (
+    <Media />
+  )
+}
+
+function UsingCSS() {
+  
+  return (
+    <>
+      <div
+        className="py-4 my-2 bg-sky-500"
+        style={{ borderRadius: ".5rem", width: "100%" }}
+      >
+        <p>
+          This is an element using Inline CSS: use
+          <i className="text-red">style property</i>
+        </p>
+      </div>
+      <div
+        className="py-4 my-2 bg-sky-500 header"
+        style={{ borderRadius: ".5rem", width: "100%" }}
+      >
+        <p>
+          This is an element using{" "}
+          <b className="text-gradient reverse">Internal CSS when in Development environment {"=>"} External when in Production: npm run build </b>: npm start: use{" "}
+          <b>style tag element</b> by declaring some class in a file CSS and
+          import it. Example: .heading is declared in App.css
+        </p>
+      </div>
+    </>
+  );  
+}
+
+function CSSModule() {
+  return (
+    <GlobalStyles>
+      <Paragraph />
+      <Heading />
+    </GlobalStyles>
+  );
+}
+
+function Navigation() {
+  return (
+    <nav>
+      <ul>
+        {/* <li><a className="text-gradient font-bold hover:ring hover:ring-violet-300" href="/">Home</a></li>
+        <li><a className="text-gradient font-bold hover:ring hover:ring-violet-300" href="/shop">Shop</a></li>
+        <li><a className="text-gradient font-bold hover:ring hover:ring-violet-300" href="/blog">Blog</a></li> */}
+        <li><Link to="/" className="text-gradient font-bold hover:ring hover:ring-violet-300">Home</Link></li>
+        <li><Link to="/shop" className="text-gradient font-bold hover:ring hover:ring-violet-300">Shop</Link></li>
+        <li><Link to="/blog" className="text-gradient font-bold hover:ring hover:ring-violet-300">Blog</Link></li>
+      </ul>
+    </nav>
+  )
+}
+
+function App() {  
   const [count, setCount] = useState(0);
   const [name, setName] = useState("Hung Rose");
   const [username, setUsername] = useState("");
-  const [lastCount, setLastCount] = useState([]);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [lastCount, setLastCount] = useState([]); 
   const reactLogo =
     "https://www.ethode.com/contentAsset/image/84e3be24-58bc-499c-9d50-f8088158f11a/image/filter/Resize/resize_w/1024";
   useEffect(() => {
@@ -321,13 +722,34 @@ function App() {
   const increment = (step) => {
     setCount( count => count + step);
   };
-  setInterval(() => {
-    setCurrentTime(new Date());
-  }, 1000);
+  // setInterval(() => {
+  //   setCurrentTime(new Date());
+  // }, 1000);
   return (
     <div className="App selection:bg-fuchsia-300">
-      <header className="App-header">
-        <CurrentTime date={currentTime} />
+        <Timer />
+      <Navigation />
+      <Routes>
+        <Route path="/" element={<HomePage /> } />
+        <Route path="/shop" element={<ShopPage /> } />
+        <Route path="/blog" element={<BlogPage /> } />
+      </Routes>
+      <header className="App-header"> 
+        <UsingCSS />
+        <CSSModule />
+        <TaskProvider>
+          <GlobalStateWithReducerAndContext />
+        </TaskProvider>
+        <HookUseImperactiveHandle />
+        <MyTask />
+        <DemoUseContext />
+        <Counters /> 
+        <Shopping />
+        <TodoList />
+        <PreviewUploadImage />
+        <Channel /> 
+        <Comment />
+        <FormCourseSelect />
         <Counter />
         <BucketList />
         <h1 className="text-yellow-300">Simple program - Counter</h1>
@@ -356,16 +778,8 @@ function App() {
           }}
         >
           Reset
-        </button>
-        <DisplayModal title />
-        <iframe
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-          title="Rick Astley - Never Gonna Give You Up (Official Music Video)"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen
-          className="aspect-[20/12]] md:aspect-video lg:aspect-square w-50"
-        ></iframe>
+        </button> 
+        <GoOnTop />
         <div className="bg-slate-100 container sm:container-sm md:container-md lg-container-lg xl:container-xl .bg-stripes-purple">
           <div className="w-48 h-48 bg-rose-300"></div>
         </div>
@@ -396,7 +810,7 @@ function App() {
           </div>
         </div>
         <div className="flex items-center content-center md:overflow-x-hidden sm:overflow-visible overflow-hidden">
-          <span class="box-decoration-slice hover:box-decoration-clone bg-gradient-to-r from-indigo-600 to-pink-500 text-white px-2">
+          <span className="box-decoration-slice hover:box-decoration-clone bg-gradient-to-r from-indigo-600 to-pink-500 text-white px-2">
             Hello
             <br />
             World
